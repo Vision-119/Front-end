@@ -69,8 +69,13 @@ async function TeamContent({ params }: { params: Promise<{ teamId: string }> }) 
           <ul className="mt-3 space-y-2 text-sm">
             {members.map((m) => (
               <li key={m.id} className="flex justify-between gap-2">
-                <span>{m.name}</span>
-                <span className="text-zinc-500">{ROLE_LABEL[m.role]}</span>
+                <span>
+                  {m.name} <span className="text-zinc-500">{m.title}</span>
+                </span>
+                <span className="text-zinc-500">
+                  {m.ext && `☎ ${m.ext} · `}
+                  {ROLE_LABEL[m.role]}
+                </span>
               </li>
             ))}
           </ul>

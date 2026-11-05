@@ -1,28 +1,39 @@
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 import type { Item, User } from "../types";
 import { MEMBER_TEAMS } from "./org";
 
-// In-memory demo store. Resets on server restart; replace with the backend API.
+// In-memory store seeded from the staff directory. Resets on server restart;
+// replace with the backend API.
+//
+// Real staff live in data/staff.json (git-ignored: personal data).
+// Without it, the fake data/staff.example.json is used.
 
 export const DEMO_PASSWORD = "1234";
 
-const admins: User[] = [
-  { id: "u-admin", name: "시스템 관리자", email: "admin@vision119.com", role: "admin", teamId: null },
-  { id: "u-ceo", name: "대표님", email: "ceo@vision119.com", role: "admin", teamId: null },
-  { id: "u-kd", name: "KD", email: "kd@vision119.com", role: "admin", teamId: "management" },
-  { id: "u-choi", name: "최차장님", email: "choi@vision119.com", role: "admin", teamId: "rnd" },
-];
+const STAFF_FILE = path.join(process.cwd(), "data", "staff.json");
+const EXAMPLE_FILE = path.join(process.cwd(), "data", "staff.example.json");
 
-const teamUsers: User[] = MEMBER_TEAMS.flatMap((t) => [
-  { id: `u-${t.id}-leader`, name: `${t.name} 팀장`, email: `${t.id}.leader@vision119.com`, role: "leader", teamId: t.id },
-  { id: `u-${t.id}-member`, name: `${t.name} 팀원`, email: `${t.id}.member@vision119.com`, role: "member", teamId: t.id },
-]);
+export const USING_EXAMPLE_STAFF = !existsSync(STAFF_FILE);
 
-const users: User[] = [...admins, ...teamUsers];
+type StaffRow = Omit<User, "id">;
 
-const items: Item[] = MEMBER_TEAMS.flatMap((t, i) => [
-  { id: `i-${t.id}-1`, teamId: t.id, ownerId: `u-${t.id}-leader`, title: `${t.name} 주간 회의록`, createdAt: `2026-11-0${(i % 4) + 1}` },
-  { id: `i-${t.id}-2`, teamId: t.id, ownerId: `u-${t.id}-member`, title: `${t.name} 업무 보고`, createdAt: `2026-11-0${(i % 4) + 2}` },
-]);
+const rows: StaffRow[] = JSON.parse(readFileSync(USING_EXAMPLE_STAFF ? EXAMPLE_FILE : STAFF_FILE, "utf8"));
+
+const users: User[] = rows
+  .filter((r) => r.email)
+  .map((r) => ({ ...r, id: `u-${r.email.split("@")[0].toLowerCase()}`, email: r.email.toLowerCase() }));
+
+// A couple of sample items per team so pages aren't empty.
+const items: Item[] = MEMBER_TEAMS.flatMap((t) => {
+  const members = users.filter((u) => u.teamId === t.id);
+  const lead = members.find((u) => u.role === "leader") ?? members[0];
+  const member = members.find((u) => u !== lead);
+  return [
+    lead && { id: `i-${t.id}-1`, teamId: t.id, ownerId: lead.id, title: `${t.name} 주간 회의록`, createdAt: "2026-11-03" },
+    member && { id: `i-${t.id}-2`, teamId: t.id, ownerId: member.id, title: `${t.name} 업무 보고`, createdAt: "2026-11-04" },
+  ].filter((i): i is Item => Boolean(i));
+});
 
 let seq = 0;
 
@@ -30,7 +41,7 @@ export const db = {
   users: {
     all: () => users,
     byId: (id: string) => users.find((u) => u.id === id),
-    byEmail: (email: string) => users.find((u) => u.email.toLowerCase() === email.toLowerCase()),
+    byEmail: (email: string) => users.find((u) => u.email === email.toLowerCase()),
     inTeam: (teamId: string) => users.filter((u) => u.teamId === teamId),
     update: (id: string, patch: Partial<Pick<User, "role" | "teamId">>) => {
       const user = users.find((u) => u.id === id);

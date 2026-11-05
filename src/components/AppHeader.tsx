@@ -16,7 +16,7 @@ async function UserNav() {
         <Link href="/admin" className="font-medium hover:text-red-600">관리자</Link>
       )}
       <span className="hidden text-zinc-500 md:inline">
-        {user.name} · {ROLE_LABEL[user.role]}
+        {user.name} {user.title} · {ROLE_LABEL[user.role]}
         {user.teamId && ` · ${teamPath(user.teamId)}`}
       </span>
     </>

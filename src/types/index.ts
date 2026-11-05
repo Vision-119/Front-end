@@ -9,6 +9,10 @@ export type Team = {
 export type User = {
   id: string;
   name: string;
+  /** 직급, e.g. 차장 */
+  title: string;
+  /** 내선번호 */
+  ext: string;
   email: string;
   role: Role;
   /** null for admins who sit above the org chart (e.g. 대표님). */

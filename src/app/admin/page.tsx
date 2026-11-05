@@ -58,7 +58,9 @@ async function AdminContent() {
                 return (
                   <tr key={u.id}>
                     <td className="py-2 pr-3">
-                      <p className="font-medium">{u.name}</p>
+                      <p className="font-medium">
+                        {u.name} <span className="font-normal text-zinc-500">{u.title}</span>
+                      </p>
                       <p className="text-xs text-zinc-500">{u.email}</p>
                     </td>
                     <td className="py-2 pr-3">

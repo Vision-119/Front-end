@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { db, DEMO_PASSWORD, USING_EXAMPLE_STAFF } from "../../../lib/db";
+import { ROLE_LABEL } from "../../../lib/org";
 import LoginForm from "../_components/LoginForm";
 
 export const metadata: Metadata = { title: "로그인 | Vision119" };
@@ -13,13 +15,15 @@ export default function LoginPage() {
         <p className="mt-4 mb-8 text-center text-sm text-zinc-500">포털에 로그인하세요</p>
         <LoginForm />
         <details className="mt-6 text-xs text-zinc-500">
-          <summary className="cursor-pointer">데모 계정 (비밀번호 1234)</summary>
-          <ul className="mt-2 space-y-1 font-mono">
-            <li>admin@vision119.com — 관리자</li>
-            <li>ceo@ · kd@ · choi@vision119.com — 관리자</li>
-            <li>tech-sales.leader@vision119.com — 팀장</li>
-            <li>tech-sales.member@vision119.com — 팀원</li>
-          </ul>
+          <summary className="cursor-pointer">데모 로그인 안내</summary>
+          <p className="mt-2">회사 이메일 + 임시 비밀번호 {DEMO_PASSWORD}</p>
+          {USING_EXAMPLE_STAFF && (
+            <ul className="mt-2 space-y-1 font-mono">
+              {db.users.all().map((u) => (
+                <li key={u.id}>{u.email} — {ROLE_LABEL[u.role]}</li>
+              ))}
+            </ul>
+          )}
         </details>
       </div>
     </main>

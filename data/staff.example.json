@@ -1,0 +1,10 @@
+[
+  { "name": "시스템 관리자", "title": "", "email": "admin@example.com", "ext": "", "role": "admin", "teamId": null },
+  { "name": "홍길동", "title": "대표이사", "email": "ceo@example.com", "ext": "999", "role": "admin", "teamId": null },
+  { "name": "김경영", "title": "과장", "email": "mgmt.leader@example.com", "ext": "301", "role": "leader", "teamId": "management" },
+  { "name": "이경영", "title": "주임", "email": "mgmt.member@example.com", "ext": "302", "role": "member", "teamId": "management" },
+  { "name": "박기술", "title": "부장", "email": "tech.leader@example.com", "ext": "101", "role": "leader", "teamId": "tech-sales" },
+  { "name": "최기술", "title": "대리", "email": "tech.member@example.com", "ext": "102", "role": "member", "teamId": "tech-sales" },
+  { "name": "정연구", "title": "차장", "email": "rnd.leader@example.com", "ext": "401", "role": "admin", "teamId": "rnd" },
+  { "name": "강연구", "title": "주임", "email": "rnd.member@example.com", "ext": "402", "role": "member", "teamId": "rnd" }
+]

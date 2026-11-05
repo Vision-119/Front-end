@@ -12,7 +12,7 @@ async function Dashboard() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold tracking-tight">안녕하세요, {user.name}</h1>
+      <h1 className="text-2xl font-bold tracking-tight">{`안녕하세요, ${user.name} ${user.title}님`}</h1>
       <p className="mt-1 text-zinc-500">
         {ROLE_LABEL[user.role]} 권한 ·{" "}
         {isAdmin(user) ? "전체 팀을 볼 수 있습니다." : "소속 팀 페이지를 볼 수 있습니다."}
