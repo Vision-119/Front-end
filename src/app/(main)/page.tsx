@@ -3,17 +3,17 @@ import { Suspense } from "react";
 import { cardClass } from "../../components/AppHeader";
 import { TeamCards } from "../../components/TeamView";
 import { requireUser } from "../../lib/auth";
-import { getTeam, ROLE_LABEL } from "../../lib/org";
-import { isAdmin } from "../../lib/permissions";
+import { ROLE_LABEL } from "../../lib/org";
+import { isAdmin, workTeams } from "../../lib/permissions";
 
 // 내 업무 mode: everyone (admins included) sees only their own team here.
 // Admins switch to 관리자 mode with the header toggle to see every team.
 async function Dashboard() {
   const user = await requireUser();
-  const team = getTeam(user.teamId);
+  const teams = workTeams(user);
 
   // Admins with no team (e.g. 대표이사) have no personal workspace.
-  if (!team && isAdmin(user)) redirect("/admin");
+  if (!teams.length && isAdmin(user)) redirect("/admin");
 
   return (
     <>
@@ -24,7 +24,7 @@ async function Dashboard() {
       </p>
 
       <h2 className="mt-8 mb-3 text-sm font-semibold text-zinc-500">내 팀</h2>
-      {team ? <TeamCards teams={[team]} basePath="/teams" /> : <p className={cardClass}>소속된 팀이 없습니다.</p>}
+      {teams.length ? <TeamCards teams={teams} basePath="/teams" /> : <p className={cardClass}>소속된 팀이 없습니다.</p>}
     </>
   );
 }

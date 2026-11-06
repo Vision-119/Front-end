@@ -17,6 +17,8 @@ export type User = {
   role: Role;
   /** null for admins who sit above the org chart (e.g. 대표님). */
   teamId: string | null;
+  /** Technical account (e.g. 시스템 관리자) — hidden from the org chart. */
+  system?: boolean;
 };
 
 export type Item = {

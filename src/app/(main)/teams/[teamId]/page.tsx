@@ -4,7 +4,7 @@ import { NoAccess } from "../../../../components/AppHeader";
 import { TeamView } from "../../../../components/TeamView";
 import { requireUser } from "../../../../lib/auth";
 import { getTeam, MEMBER_TEAMS } from "../../../../lib/org";
-import { isAdmin } from "../../../../lib/permissions";
+import { inOwnScope, isAdmin } from "../../../../lib/permissions";
 
 export function generateStaticParams() {
   return MEMBER_TEAMS.map((t) => ({ teamId: t.id }));
@@ -17,7 +17,7 @@ async function TeamContent({ params }: { params: Promise<{ teamId: string }> }) 
 
   const user = await requireUser();
   // 내 업무 mode shows your own team only — admins view other teams in 관리자 mode.
-  if (user.teamId !== teamId) {
+  if (!inOwnScope(user, teamId)) {
     return isAdmin(user) ? (
       <NoAccess message="다른 팀은 관리자 모드에서 볼 수 있습니다." href={`/admin/teams/${teamId}`} linkLabel="관리자 모드로 보기" />
     ) : (

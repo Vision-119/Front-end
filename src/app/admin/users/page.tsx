@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { cardClass, NoAccess } from "../../../components/AppHeader";
 import { requireUser } from "../../../lib/auth";
 import { db } from "../../../lib/db";
-import { MEMBER_TEAMS, ROLE_LABEL } from "../../../lib/org";
+import { ORG, ROLE_LABEL, teamPath } from "../../../lib/org";
 import { canManageOrg } from "../../../lib/permissions";
 import type { Role } from "../../../types";
 import { updateUser } from "../actions";
@@ -54,8 +54,8 @@ async function UsersContent() {
                   <td className="py-2 pr-3">
                     <select form={formId} name="teamId" defaultValue={u.teamId ?? ""} className={selectClass}>
                       <option value="">— 없음</option>
-                      {MEMBER_TEAMS.map((t) => (
-                        <option key={t.id} value={t.id}>{t.name}</option>
+                      {ORG.map((t) => (
+                        <option key={t.id} value={t.id}>{teamPath(t.id)}</option>
                       ))}
                     </select>
                   </td>

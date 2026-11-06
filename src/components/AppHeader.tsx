@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { logout } from "../app/(auth)/actions";
 import { getSession } from "../lib/auth";
 import { ROLE_LABEL, teamPath } from "../lib/org";
 import { isAdmin } from "../lib/permissions";
+import ProfileMenu from "./ProfileMenu";
 
 /** "work" = the user's own pages; "admin" = company-wide admin console (admins only). */
 export type Mode = "work" | "admin";
@@ -73,10 +73,15 @@ async function UserNav({ mode }: { mode: Mode }) {
           {l.label}
         </Link>
       ))}
-      <span className="hidden text-zinc-500 lg:inline">
-        {user.name} {user.title} · {ROLE_LABEL[user.role]}
-        {user.teamId && ` · ${teamPath(user.teamId)}`}
-      </span>
+      <ProfileMenu
+        name={user.name}
+        title={user.title}
+        email={user.email}
+        roleLabel={ROLE_LABEL[user.role]}
+        team={teamPath(user.teamId)}
+        ext={user.ext}
+        isAdmin={isAdmin(user)}
+      />
     </>
   );
 }
@@ -88,7 +93,7 @@ export default function AppHeader({ mode }: { mode: Mode }) {
         mode === "admin" ? "border-red-600/40 shadow-[inset_0_3px_0_0_var(--color-red-600)]" : "border-zinc-200 dark:border-zinc-800"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex shrink-0 items-center gap-3">
           <Link href={mode === "admin" ? "/admin" : "/"} aria-label="홈">
             <Image src="/logo_black.svg" alt="Vision119" width={120} height={24} priority className="h-6 w-auto dark:hidden" />
@@ -102,14 +107,6 @@ export default function AppHeader({ mode }: { mode: Mode }) {
           <Suspense>
             <UserNav mode={mode} />
           </Suspense>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="rounded-lg border border-zinc-300 px-3 py-1.5 font-medium hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
-            >
-              로그아웃
-            </button>
-          </form>
         </nav>
       </div>
     </header>
@@ -120,7 +117,7 @@ export function PageShell({ mode, children }: { mode: Mode; children: React.Reac
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
       <AppHeader mode={mode} />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
+      <main className="w-full flex-1 px-4 py-8 sm:px-6 lg:px-8">{children}</main>
     </div>
   );
 }

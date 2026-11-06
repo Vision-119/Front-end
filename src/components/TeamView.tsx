@@ -15,7 +15,7 @@ export function TeamView({ teamId, user }: { teamId: string; user: User }) {
     <>
       <h1 className="text-2xl font-bold tracking-tight">{teamPath(teamId)}</h1>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_280px]">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
         <section className={cardClass}>
           <h2 className="font-semibold">팀 항목</h2>
 
@@ -77,7 +77,7 @@ export function TeamView({ teamId, user }: { teamId: string; user: User }) {
 /** Grid of team cards linking to `${basePath}/${team.id}`. */
 export function TeamCards({ teams, basePath }: { teams: Team[]; basePath: string }) {
   return (
-    <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <section className="grid content-start gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {teams.map((team) => {
         const parent = getTeam(team.parentId ?? null);
         return (
