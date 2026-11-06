@@ -1,5 +1,5 @@
 import { PageShell } from "../../components/AppHeader";
 
 export default function MainLayout({ children }: LayoutProps<"/">) {
-  return <PageShell>{children}</PageShell>;
+  return <PageShell mode="work">{children}</PageShell>;
 }
