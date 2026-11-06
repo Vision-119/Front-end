@@ -21,6 +21,17 @@ export type User = {
   system?: boolean;
 };
 
+export type ProductStatus = "판매중" | "단종";
+
+export type Product = {
+  id: string;
+  name: string;
+  code: string;
+  category: string;
+  status: ProductStatus;
+  createdAt: string;
+};
+
 export type Item = {
   id: string;
   teamId: string;

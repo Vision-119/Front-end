@@ -57,22 +57,15 @@ function ModeToggle({ mode }: { mode: Mode }) {
 async function UserNav({ mode }: { mode: Mode }) {
   const user = await getSession();
   if (!user) return null;
-  const links =
-    mode === "admin"
-      ? [
-          { href: "/admin", label: "전체 팀" },
-          { href: "/admin/users", label: "사용자 관리" },
-        ]
-      : [{ href: "/", label: "홈" }];
-
+  // Admin-mode navigation lives in the admin sidebar, not the header.
   return (
     <>
       {isAdmin(user) && <ModeToggle mode={mode} />}
-      {links.map((l) => (
-        <Link key={l.href} href={l.href} className="font-medium hover:text-red-600">
-          {l.label}
+      {mode === "work" && (
+        <Link href="/" className="font-medium hover:text-red-600">
+          홈
         </Link>
-      ))}
+      )}
       <ProfileMenu
         name={user.name}
         title={user.title}
@@ -113,11 +106,22 @@ export default function AppHeader({ mode }: { mode: Mode }) {
   );
 }
 
-export function PageShell({ mode, children }: { mode: Mode; children: React.ReactNode }) {
+export function PageShell({
+  mode,
+  sidebar,
+  children,
+}: {
+  mode: Mode;
+  sidebar?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
       <AppHeader mode={mode} />
-      <main className="w-full flex-1 px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+      <div className="flex flex-1 flex-col md:flex-row">
+        {sidebar}
+        <main className="min-w-0 flex-1 px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import type { Item, User } from "../types";
+import type { Item, Product, User } from "../types";
 import { MEMBER_TEAMS } from "./org";
 
 // In-memory store seeded from the staff directory. Resets on server restart;
@@ -35,7 +35,11 @@ const items: Item[] = MEMBER_TEAMS.flatMap((t) => {
   ].filter((i): i is Item => Boolean(i));
 });
 
+const products: Product[] = [];
+
 let seq = 0;
+
+const today = () => new Date().toISOString().slice(0, 10);
 
 export const db = {
   users: {
@@ -52,11 +56,26 @@ export const db = {
     byId: (id: string) => items.find((i) => i.id === id),
     inTeam: (teamId: string) => items.filter((i) => i.teamId === teamId),
     create: (data: Omit<Item, "id" | "createdAt">) => {
-      items.unshift({ ...data, id: `i-new-${++seq}`, createdAt: new Date().toISOString().slice(0, 10) });
+      items.unshift({ ...data, id: `i-new-${++seq}`, createdAt: today() });
     },
     remove: (id: string) => {
       const idx = items.findIndex((i) => i.id === id);
       if (idx >= 0) items.splice(idx, 1);
+    },
+  },
+  products: {
+    all: () => products,
+    byCode: (code: string) => products.find((p) => p.code.toLowerCase() === code.toLowerCase()),
+    create: (data: Omit<Product, "id" | "createdAt">) => {
+      products.unshift({ ...data, id: `p-${++seq}`, createdAt: today() });
+    },
+    update: (id: string, patch: Partial<Pick<Product, "status">>) => {
+      const p = products.find((x) => x.id === id);
+      if (p) Object.assign(p, patch);
+    },
+    remove: (id: string) => {
+      const idx = products.findIndex((p) => p.id === id);
+      if (idx >= 0) products.splice(idx, 1);
     },
   },
 };
