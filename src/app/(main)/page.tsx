@@ -24,7 +24,7 @@ async function Dashboard() {
       </p>
 
       <h2 className="mt-8 mb-3 text-sm font-semibold text-zinc-500">내 팀</h2>
-      {teams.length ? <TeamCards teams={teams} basePath="" /> : <p className={cardClass}>소속된 팀이 없습니다.</p>}
+      {teams.length ? <TeamCards teams={teams} /> : <p className={cardClass}>소속된 팀이 없습니다.</p>}
     </>
   );
 }

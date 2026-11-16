@@ -22,6 +22,12 @@ export const childTeams = (parentId?: string) => ORG.filter((t) => t.parentId ==
 /** Teams that have their own team page (leaf nodes of the org chart). */
 export const MEMBER_TEAMS = ORG.filter((t) => !ORG.some((c) => c.parentId === t.id));
 
+/** URL of a department's pages in 내 업무 mode: sub-teams live under their division (/sales/tech-sales). */
+export const deptHref = (id: string) => {
+  const parent = getTeam(getTeam(id)?.parentId);
+  return parent ? `/${parent.id}/${id}` : `/${id}`;
+};
+
 export const teamPath = (id: string | null) => {
   const team = getTeam(id);
   if (!team) return "";

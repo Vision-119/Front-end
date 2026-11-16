@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { addItem, deleteItem } from "../app/(main)/(dept)/[deptId]/actions";
+import { addItem, deleteItem } from "../app/(main)/(dept)/_lib/actions";
 import { db } from "../lib/db";
-import { getTeam, ROLE_LABEL, teamPath } from "../lib/org";
+import { deptHref, getTeam, ROLE_LABEL, teamPath } from "../lib/org";
 import { canCreateItem, canManageItem } from "../lib/permissions";
 import type { Team, User } from "../types";
 import { cardClass } from "./AppHeader";
 
-/** Team page body, shared by 내 업무 (/x) and 관리자 (/admin/teams/x) modes. */
+/** Team page body, shared by 내 업무 (/x, /sales/x) and 관리자 (/admin/teams/x) modes. */
 export function TeamView({ teamId, user }: { teamId: string; user: User }) {
   const members = db.users.inTeam(teamId);
   const items = db.items.inTeam(teamId);
@@ -74,14 +74,14 @@ export function TeamView({ teamId, user }: { teamId: string; user: User }) {
   );
 }
 
-/** Grid of team cards linking to `${basePath}/${team.id}`. */
-export function TeamCards({ teams, basePath }: { teams: Team[]; basePath: string }) {
+/** Grid of team cards linking to `${basePath}/${team.id}`, or to the team's 내 업무 page when no basePath is given. */
+export function TeamCards({ teams, basePath }: { teams: Team[]; basePath?: string }) {
   return (
     <section className="grid content-start gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {teams.map((team) => {
         const parent = getTeam(team.parentId ?? null);
         return (
-          <Link key={team.id} href={`${basePath}/${team.id}`} className={`${cardClass} transition-colors hover:border-red-600`}>
+          <Link key={team.id} href={basePath ? `${basePath}/${team.id}` : deptHref(team.id)} className={`${cardClass} transition-colors hover:border-red-600`}>
             {parent && <p className="text-xs text-zinc-500">{parent.name}</p>}
             <h3 className="font-semibold">{team.name}</h3>
             <p className="mt-2 text-sm text-zinc-500">

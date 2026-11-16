@@ -42,9 +42,7 @@ export default function LoginPage({ searchParams }: { searchParams: SearchParams
         </Suspense>
         {microsoftEnabled && (
           <>
-            {/* Plain <a>: this is an API route that redirects to Microsoft, not a page to prefetch.
-                The lint rule mistakes it for a page because of the top-level [deptId] route. */}
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            {/* Plain <a>: this is an API route that redirects to Microsoft, not a page to prefetch. */}
             <a
               href="/api/auth/microsoft"
               className="flex h-11 items-center justify-center gap-3 rounded-lg border border-zinc-300 bg-white font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"

@@ -137,7 +137,6 @@ const WORK_GROUPS: Group[] = [
           { id: "t-pr-4", label: "카탈로그·자료실", features: ["카탈로그", "자료실"] },
         ],
       },
-      { id: "t-plan", label: "영업기획팀", icon: "target", badge: "확인 필요", features: ["업무 범위 확인 필요"] },
     ],
   },
   {
