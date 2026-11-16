@@ -22,7 +22,12 @@ const rows: StaffRow[] = JSON.parse(readFileSync(USING_EXAMPLE_STAFF ? EXAMPLE_F
 
 const users: User[] = rows
   .filter((r) => r.email)
-  .map((r) => ({ ...r, id: `u-${r.email.split("@")[0].toLowerCase()}`, email: r.email.toLowerCase() }));
+  .map((r) => ({
+    ...r,
+    id: `u-${r.email.split("@")[0].toLowerCase()}`,
+    email: r.email.toLowerCase(),
+    aliases: r.aliases?.map((a) => a.toLowerCase()),
+  }));
 
 // A couple of sample items per team so pages aren't empty.
 const items: Item[] = MEMBER_TEAMS.flatMap((t) => {
@@ -45,7 +50,10 @@ export const db = {
   users: {
     all: () => users,
     byId: (id: string) => users.find((u) => u.id === id),
-    byEmail: (email: string) => users.find((u) => u.email === email.toLowerCase()),
+    byEmail: (email: string) => {
+      const e = email.toLowerCase();
+      return users.find((u) => u.email === e || u.aliases?.includes(e));
+    },
     inTeam: (teamId: string) => users.filter((u) => u.teamId === teamId),
     update: (id: string, patch: Partial<Pick<User, "role" | "teamId">>) => {
       const user = users.find((u) => u.id === id);

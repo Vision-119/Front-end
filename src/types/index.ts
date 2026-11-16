@@ -14,6 +14,8 @@ export type User = {
   /** 내선번호 */
   ext: string;
   email: string;
+  /** Extra addresses that sign in as this user, e.g. a Microsoft account UPN (name@v119n.onmicrosoft.com). */
+  aliases?: string[];
   role: Role;
   /** null for admins who sit above the org chart (e.g. 대표님). */
   teamId: string | null;

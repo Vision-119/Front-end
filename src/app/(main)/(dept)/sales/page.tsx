@@ -104,7 +104,7 @@ function money(value?: string) {
   return value ? `${Number(value).toLocaleString("ko-KR")}원` : "";
 }
 
-export default function SalesDashboard() {
+export default function SalesPage() {
   const [projects, setProjects] = useState(initialProjects);
   const [tab, setTab] = useState<ProjectStatus>("run");
   const [selectedCode, setSelectedCode] = useState(initialProjects[0].code);

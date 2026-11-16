@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { addItem, deleteItem } from "../app/(main)/teams/[teamId]/actions";
+import { addItem, deleteItem } from "../app/(main)/(dept)/[deptId]/actions";
 import { db } from "../lib/db";
 import { getTeam, ROLE_LABEL, teamPath } from "../lib/org";
 import { canCreateItem, canManageItem } from "../lib/permissions";
 import type { Team, User } from "../types";
 import { cardClass } from "./AppHeader";
 
-/** Team page body, shared by 내 업무 (/teams/x) and 관리자 (/admin/teams/x) modes. */
+/** Team page body, shared by 내 업무 (/x) and 관리자 (/admin/teams/x) modes. */
 export function TeamView({ teamId, user }: { teamId: string; user: User }) {
   const members = db.users.inTeam(teamId);
   const items = db.items.inTeam(teamId);

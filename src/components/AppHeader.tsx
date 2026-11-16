@@ -89,8 +89,8 @@ export default function AppHeader({ mode }: { mode: Mode }) {
       <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex shrink-0 items-center gap-3">
           <Link href={mode === "admin" ? "/admin" : "/"} aria-label="홈">
-            <Image src="/logo_black.svg" alt="Vision119" width={120} height={24} priority className="h-6 w-auto dark:hidden" />
-            <Image src="/logo_white.svg" alt="Vision119" width={120} height={24} priority className="hidden h-6 w-auto dark:block" />
+            <Image src="/logo_black.svg" alt="Vision119" width={121} height={24} priority className="h-6 w-auto dark:hidden" />
+            <Image src="/logo_white.svg" alt="Vision119" width={121} height={24} priority className="hidden h-6 w-auto dark:block" />
           </Link>
           {mode === "admin" && (
             <span className="rounded bg-red-600 px-1.5 py-0.5 text-[11px] font-semibold text-white">관리자 모드</span>
