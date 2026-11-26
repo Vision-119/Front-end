@@ -41,6 +41,24 @@ if (USING_EXAMPLE_STAFF && process.env.NODE_ENV === "production") {
   console.warn("[db] STAFF_JSON not set and data/staff.json missing — using example staff; real users can't sign in.");
 }
 
+// Accounts that must always be able to sign in, even when the staff directory
+// isn't deployed (e.g. production). Only work email addresses — no personal data.
+const BUILT_IN_STAFF: StaffRow[] = [
+  {
+    name: "케이디",
+    title: "주임",
+    email: "kaydee@vision119.com",
+    aliases: ["kaydee21@v119n.onmicrosoft.com"],
+    ext: "",
+    role: "admin",
+    teamId: "management",
+  },
+];
+
+for (const b of BUILT_IN_STAFF) {
+  if (!rows.some((r) => r.email?.toLowerCase() === b.email)) rows.push(b);
+}
+
 const users: User[] = rows
   .filter((r) => r.email)
   .map((r) => ({
