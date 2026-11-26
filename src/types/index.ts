@@ -41,3 +41,28 @@ export type Item = {
   title: string;
   createdAt: string;
 };
+
+/** 외부 담당자 (e.g. 지자체·발주처 contact) kept by a team. */
+export type Contact = {
+  id: string;
+  teamId: string;
+  name: string;
+  company: string;
+  title: string;
+  email: string;
+  phone: string;
+  memo: string;
+  createdAt: string;
+};
+
+/** A mail sent from the portal (sent log). */
+export type SentMail = {
+  id: string;
+  teamId: string;
+  senderId: string;
+  to: string;
+  subject: string;
+  sentAt: string;
+  status: "sent" | "failed";
+  error?: string;
+};

@@ -1,24 +1,45 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import type { Item, Product, User } from "../types";
+import type { Contact, Item, Product, SentMail, User } from "../types";
 import { MEMBER_TEAMS } from "./org";
 
 // In-memory store seeded from the staff directory. Resets on server restart;
 // replace with the backend API.
 //
-// Real staff live in data/staff.json (git-ignored: personal data).
-// Without it, the fake data/staff.example.json is used.
+// Real staff come from (first match wins):
+//   1. STAFF_JSON env var — the contents of staff.json, raw JSON or base64. Use this in
+//      production, where the git-ignored file isn't deployed.
+//   2. data/staff.json (git-ignored: personal data) — local development.
+// Without either, the fake data/staff.example.json is used.
 
 export const DEMO_PASSWORD = "1234";
 
 const STAFF_FILE = path.join(process.cwd(), "data", "staff.json");
 const EXAMPLE_FILE = path.join(process.cwd(), "data", "staff.example.json");
 
-export const USING_EXAMPLE_STAFF = !existsSync(STAFF_FILE);
-
 type StaffRow = Omit<User, "id">;
 
-const rows: StaffRow[] = JSON.parse(readFileSync(USING_EXAMPLE_STAFF ? EXAMPLE_FILE : STAFF_FILE, "utf8"));
+function loadStaffFromEnv(): StaffRow[] | null {
+  const raw = process.env.STAFF_JSON?.trim();
+  if (!raw) return null;
+  const text = raw.startsWith("[") ? raw : Buffer.from(raw, "base64").toString("utf8");
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error("STAFF_JSON is not valid JSON (or base64-encoded JSON)");
+  }
+}
+
+const envRows = loadStaffFromEnv();
+
+export const USING_EXAMPLE_STAFF = !envRows && !existsSync(STAFF_FILE);
+
+const rows: StaffRow[] =
+  envRows ?? JSON.parse(readFileSync(USING_EXAMPLE_STAFF ? EXAMPLE_FILE : STAFF_FILE, "utf8"));
+
+if (USING_EXAMPLE_STAFF && process.env.NODE_ENV === "production") {
+  console.warn("[db] STAFF_JSON not set and data/staff.json missing — using example staff; real users can't sign in.");
+}
 
 const users: User[] = rows
   .filter((r) => r.email)
@@ -41,6 +62,9 @@ const items: Item[] = MEMBER_TEAMS.flatMap((t) => {
 });
 
 const products: Product[] = [];
+
+const contacts: Contact[] = [];
+const sentMails: SentMail[] = [];
 
 let seq = 0;
 
@@ -84,6 +108,23 @@ export const db = {
     remove: (id: string) => {
       const idx = products.findIndex((p) => p.id === id);
       if (idx >= 0) products.splice(idx, 1);
+    },
+  },
+  contacts: {
+    byId: (id: string) => contacts.find((c) => c.id === id),
+    inTeam: (teamId: string) => contacts.filter((c) => c.teamId === teamId),
+    create: (data: Omit<Contact, "id" | "createdAt">) => {
+      contacts.unshift({ ...data, id: `c-${++seq}`, createdAt: today() });
+    },
+    remove: (id: string) => {
+      const idx = contacts.findIndex((c) => c.id === id);
+      if (idx >= 0) contacts.splice(idx, 1);
+    },
+  },
+  sentMails: {
+    inTeam: (teamId: string) => sentMails.filter((m) => m.teamId === teamId),
+    log: (data: Omit<SentMail, "id" | "sentAt">) => {
+      sentMails.unshift({ ...data, id: `m-${++seq}`, sentAt: new Date().toISOString() });
     },
   },
 };

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { NoAccess } from "../../../../components/AppHeader";
 import { requireUser } from "../../../../lib/auth";
 import { childTeams, getTeam } from "../../../../lib/org";
-import { inOwnScope, isAdmin } from "../../../../lib/permissions";
+import { canViewTeam, isAdmin } from "../../../../lib/permissions";
 import type { User } from "../../../../types";
 import { DeptNav, type DeptNavItem } from "./DeptNav";
 
@@ -15,13 +15,9 @@ function denyReason(user: User, deptId: string): React.ReactNode | null {
       <NoAccess message={`${getTeam(deptId)?.name} 구성원만 볼 수 있습니다.`} />
     );
   }
-  // A team: own team only (본부장 also sees the division's sub-teams). Admins view other teams in 관리자 mode.
-  if (inOwnScope(user, deptId)) return null;
-  return isAdmin(user) ? (
-    <NoAccess message="다른 팀은 관리자 모드에서 볼 수 있습니다." href={`/admin/teams/${deptId}`} linkLabel="관리자 모드로 보기" />
-  ) : (
-    <NoAccess message="소속 팀 페이지만 볼 수 있습니다." />
-  );
+  // A team: own team only (본부장 also sees the division's sub-teams). Admins can open every team's pages.
+  if (canViewTeam(user, deptId)) return null;
+  return <NoAccess message="소속 팀 페이지만 볼 수 있습니다." />;
 }
 
 async function Gate({ deptId, nav, children }: { deptId: string; nav: DeptNavItem[]; children: React.ReactNode }) {

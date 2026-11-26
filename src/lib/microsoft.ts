@@ -4,6 +4,9 @@ import { createHash, randomBytes } from "node:crypto";
 // Configure in .env.local:
 //   AZURE_AD_TENANT_ID, AZURE_AD_CLIENT_ID, AZURE_AD_CLIENT_SECRET
 //   AZURE_AD_REDIRECT_URI (optional; defaults to <origin>/api/auth/microsoft/callback)
+// Production: set the same vars on the host, set AZURE_AD_REDIRECT_URI to
+//   https://<prod-domain>/api/auth/microsoft/callback, and add that exact URI under
+//   Entra ID → App registrations → Authentication → Web → Redirect URIs.
 
 const TENANT = process.env.AZURE_AD_TENANT_ID;
 const CLIENT_ID = process.env.AZURE_AD_CLIENT_ID;
